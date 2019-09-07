@@ -273,7 +273,7 @@ class Builder:
 			
 			if self.can_build_assimilators and (not self.game.already_pending(ASSIMILATOR) or economic_pass) and self.game.can_afford(ASSIMILATOR) and self.game.units(NEXUS).ready:
 				nexus = self.game.units(NEXUS).ready.random
-				vaspenes = self.game.state.vespene_geyser.closer_than(15.0, nexus)
+				vaspenes = self.game.vespene_geyser.closer_than(15.0, nexus)
 				for vaspene in vaspenes:
 					if not self.game.units(ASSIMILATOR).closer_than(1.0, vaspene).exists:
 						worker = self.game.select_build_worker(vaspene.position)
@@ -302,8 +302,8 @@ class Builder:
 		if not goto:
 			nexus = self.game.units(NEXUS).furthest_to(self.game.start_location)
 			#find all the minerals near the nexus and place the pylons on the opposite side.
-			if self.game.state.mineral_field.closer_than(15, nexus).exists:
-				mf = self.game.state.mineral_field.closer_than(15, nexus).random
+			if self.game.mineral_field.closer_than(15, nexus).exists:
+				mf = self.game.mineral_field.closer_than(15, nexus).random
 				xnew = nexus.position[0] + (nexus.position[0] - mf.position[0])
 				ynew = nexus.position[1] + (nexus.position[1] - mf.position[1])
 				goto = position.Point2(position.Pointlike((xnew,ynew)))
@@ -624,7 +624,7 @@ class Builder:
 	async def build_assimilator(self):
 		if self.game.can_afford(ASSIMILATOR) and self.game.units(NEXUS).ready:
 			nexus = self.game.units(NEXUS).ready.random
-			vaspenes = self.game.state.vespene_geyser.closer_than(15.0, nexus)
+			vaspenes = self.game.vespene_geyser.closer_than(15.0, nexus)
 			for vaspene in vaspenes:
 				if not self.game.units(ASSIMILATOR).closer_than(1.0, vaspene).exists:
 					#worker = self.game.select_build_worker(vaspene.position)

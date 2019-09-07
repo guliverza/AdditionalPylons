@@ -747,7 +747,7 @@ class Strategist:
 			return False  #not even worth going further
 
 		#if the enemy base has been scouted and the number of known enemy structures is 2, then gg.
-		if self.game.base_searched and self.game.known_enemy_units.structure.amount < 3 and self.game.known_enemy_units.not_structure.amount < 4:
+		if self.game.base_searched and self.game.cached_enemies.structure.amount < 3 and self.game.cached_enemies.not_structure.amount < 4:
 			#print ('gg')
 			return True
 	
@@ -1023,10 +1023,10 @@ class Strategist:
 		#setup main base pylons.
 		nexus = self.game.units(NEXUS).closest_to(self.game.start_location)
 		if nexus:
-			mins = self.game.state.mineral_field.closer_than(15, nexus)
-			vasp = self.game.state.vespene_geyser.closer_than(15, nexus)
+			mins = self.game.mineral_field.closer_than(15, nexus)
+			vasp = self.game.vespene_geyser.closer_than(15, nexus)
 #			mf = Units((mins + vasp), self.game)
-			mf = Units((mins + vasp))			
+			mf = Units((mins + vasp), self.game)			
 			if mf:
 				center_pos = Point2((sum([item.position.x for item in mf]) / len(mf), \
 						sum([item.position.y for item in mf]) / len(mf)))
@@ -1101,8 +1101,8 @@ class Strategist:
 			
 		else:
 			# expanse = await self.game.get_next_expansion()
-			# mf2 = self.game.state.mineral_field.closer_than(15, expanse)
-			# vf = self.game.state.vespene_geyser.closer_than(15, expanse)
+			# mf2 = self.game.mineral_field.closer_than(15, expanse)
+			# vf = self.game.vespene_geyser.closer_than(15, expanse)
 			# mf = Units((mf2 + vf), self.game)
 			# center_pos = Point2((sum([item.position.x for item in mf]) / len(mf), \
 			# 					sum([item.position.y for item in mf]) / len(mf)))
@@ -1115,7 +1115,7 @@ class Strategist:
 			#build off the first ramp.
 			goto = self.game.turn3d(self.game.main_base_ramp.top_center.towards(self.game.main_base_ramp.bottom_center, 15.5))
 			#check to see if we are close to the minerals, and if we are, then move towards the center of the map.
-			if self.game.state.mineral_field.closer_than(6, goto) or self.game.state.vespene_geyser.closer_than(6, goto):
+			if self.game.mineral_field.closer_than(6, goto) or self.game.vespene_geyser.closer_than(6, goto):
 				#print ('moving pylon')
 				goto = goto.towards(self.game._game_info.map_center, 10)
 			
@@ -1133,10 +1133,11 @@ class Strategist:
 
 	def detect_reaper_cheese(self):
 		#detect if the reaper is near the starting nexus, and if it is, set to true and then build cannons.
-		if not self.game.reaper_cheese and self.game.known_enemy_units.of_type([REAPER,BANSHEE]).closer_than(20, self.game.start_location).amount > 1:
-			self.game.reaper_cheese = True
-			#print ('reaper/banshee cheese detected')
-			#self.build.forges = 1
+		if self.game.cached_enemies.of_type([REAPER,BANSHEE]):
+			if not self.game.reaper_cheese and self.game.cached_enemies.of_type([REAPER,BANSHEE]).closer_than(20, self.game.start_location).amount > 1:
+				self.game.reaper_cheese = True
+				#print ('reaper/banshee cheese detected')
+				#self.build.forges = 1
 
 	def detect_allinWorker_rush(self):
 		self.game.workerAllin = False
@@ -1152,9 +1153,10 @@ class Strategist:
 		detected = False
 		if self.game.units.not_structure.exclude_type(PROBE).amount < 3 and self.game.units(PHOTONCANNON).ready.amount < 3 and self.game.units.structure.amount < 5:
 			for nexus in self.game.units(NEXUS):
-				#if not self.game.rush_detected and self.game.known_enemy_units.exclude_type(PROBE).not_flying.closer_than(20, nexus).amount > 5:
-				if not self.game.rush_detected and self.game.known_enemy_units.not_flying.closer_than(20, nexus).amount > 2:
-					detected = True
+				#if not self.game.rush_detected and self.game.cached_enemies.exclude_type(PROBE).not_flying.closer_than(20, nexus).amount > 5:
+				if self.game.cached_enemies.not_flying:
+					if not self.game.rush_detected and self.game.cached_enemies.not_flying.closer_than(20, nexus).amount > 2:
+						detected = True
 		#detected = True
 		if detected:
 			self.game.rush_detected = True
@@ -1812,7 +1814,7 @@ class Strategist:
 		terran_units = [BUNKER, LIBERATORAG, HELLIONTANK, PLANETARYFORTRESS, COMMANDCENTER, MARINE, SIEGETANK, SIEGETANKSIEGED, REAPER, GHOST, MARAUDER, THOR, MEDIVAC, BANSHEE, RAVEN, BATTLECRUISER, VIKINGASSAULT, VIKINGFIGHTER, LIBERATOR, HELLION, WIDOWMINEBURROWED, WIDOWMINE, CYCLONE, MISSILETURRET]
 		protoss_units = [MOTHERSHIP, COLOSSUS, ZEALOT, STALKER, HIGHTEMPLAR, DARKTEMPLAR, SENTRY, PHOENIX, CARRIER, VOIDRAY, WARPPRISM, OBSERVER, IMMORTAL, ADEPT, ORACLE, TEMPEST, DISRUPTOR, ARCHON, PHOTONCANNON]
 		all_units = zerg_units + terran_units + protoss_units
-		enemyThreats = self.game.known_enemy_units.of_type(all_units)
+		enemyThreats = self.game.cached_enemies.of_type(all_units)
 		new_unit = False
 		removals = {}
 		for enemy in enemyThreats:
@@ -1895,22 +1897,24 @@ class Strategist:
 	def detect_single_worker(self):
 		if not self.worker_detected and self.game.time < 180:
 			#check for the single worker and assign 2 workers to attack it.
-			if self.game.known_enemy_units.of_type([PROBE,DRONE,SCV,PHOTONCANNON,REAPER]).closer_than(25, self.game.game_info.player_start_location).amount == 1:
-				#grab the 1 worker closest to the enemy that aren't marked as collectors or scouts
-				defenders = 0
-				self.worker_detected = True
-				#for tag, obj in self.game._pb_objects.items():
-				for tag, obj in self.game.unitList.getWorkers():
-					if not obj.collect_only and not obj.scout:
-						obj.lite_defender = True
-						obj.removeGatherer()
-						
-						defenders += 1
-						if defenders > 1:
-							break
+			if self.game.cached_enemies.of_type([PROBE,DRONE,SCV,PHOTONCANNON,REAPER]):
+					
+				if self.game.cached_enemies.of_type([PROBE,DRONE,SCV,PHOTONCANNON,REAPER]).closer_than(25, self.game.game_info.player_start_location).amount == 1:
+					#grab the 1 worker closest to the enemy that aren't marked as collectors or scouts
+					defenders = 0
+					self.worker_detected = True
+					#for tag, obj in self.game._pb_objects.items():
+					for tag, obj in self.game.unitList.getWorkers():
+						if not obj.collect_only and not obj.scout:
+							obj.lite_defender = True
+							obj.removeGatherer()
+							
+							defenders += 1
+							if defenders > 1:
+								break
 		elif self.worker_detected:
 			#send workers back to work when it's over.
-			if self.game.known_enemy_units.of_type([PROBE,DRONE,SCV,PHOTONCANNON]).closer_than(25, self.game.game_info.player_start_location).amount == 0:
+			if self.game.cached_enemies.of_type([PROBE,DRONE,SCV,PHOTONCANNON]).closer_than(25, self.game.game_info.player_start_location).amount == 0:
 				self.worker_detected = False
 				#for tag, obj in self.game._pb_objects.items():
 				for tag, obj in self.game.unitList.getWorkers():

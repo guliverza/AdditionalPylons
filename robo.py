@@ -32,8 +32,9 @@ class Robo:
 			self.label = "Busy {}".format(str(len(self.abilities)))
 
 		#debugging info
-		if _debug or self.unit.is_selected:
-			self.game._client.debug_text_3d(self.label, self.unit.position3d)
+		if self.game.debugAllowed:
+			if _debug or self.unit.is_selected:
+				self.game._client.debug_text_3d(self.label, self.unit.position3d)
 
 	async def runList(self):
 

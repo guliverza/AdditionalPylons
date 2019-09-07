@@ -42,12 +42,13 @@ class WarpPrism:
 		self.runList()
 		
 		#debugging info
-		if _debug or self.unit.is_selected:
-			if self.last_target:
-				spos = Point3((self.unit.position3d.x, self.unit.position3d.y, (self.unit.position3d.z + 1)))
-				self.game._client.debug_line_out(spos, self.last_target, color=Point3((155, 255, 25)))
-			self.game._client.debug_text_3d(self.label, self.unit.position3d)
-		
+		if self.game.debugAllowed:
+			if _debug or self.unit.is_selected:
+				if self.last_target:
+					spos = Point3((self.unit.position3d.x, self.unit.position3d.y, (self.unit.position3d.z + 1)))
+					self.game._client.debug_line_out(spos, self.last_target, color=Point3((155, 255, 25)))
+				self.game._client.debug_text_3d(self.label, self.unit.position3d)
+			
 		
 	def runList(self):
 
@@ -189,7 +190,7 @@ class WarpPrism:
 		targetEnemy = self.findKiteTarget()
 		if targetEnemy:
 			kitePoint = self.findKiteBackTarget(targetEnemy)
-			if kitePoint:
+			if len(kitePoint) > 0:
 				if AbilityId.MORPH_WARPPRISMTRANSPORTMODE in self.abilities and self.game.can_afford(MORPH_WARPPRISMTRANSPORTMODE):
 					self.game.combinedActions.append(self.unit(AbilityId.MORPH_WARPPRISMTRANSPORTMODE))
 					return True
@@ -232,8 +233,8 @@ class WarpPrism:
 		#if we make it to here, then everyone wants to be dropped back into battle.
 		#find the closest friendly to drop near.
 		fUnits = self.game.units().not_flying.filter(lambda x: x.can_attack_ground)
-		if self.game.known_enemy_units.exists and len(self.game.units().not_flying) > 0 and fUnits:
-			closestFriendly = fUnits.closest_to(self.game.known_enemy_units.closest_to(self.unit))
+		if self.game.cached_enemies.exists and len(self.game.units().not_flying) > 0 and fUnits:
+			closestFriendly = fUnits.closest_to(self.game.cached_enemies.closest_to(self.unit))
 		elif len(self.game.units().not_flying) > 0 and fUnits:
 			closestFriendly = fUnits.closest_to(self.unit)
 		if closestFriendly:
@@ -320,8 +321,8 @@ class WarpPrism:
 		#find the friendly unit that is closest to enemy and move towards it, or just move to the closest friendly if no enemies fround
 		closestFriendly = None
 		fUnits = self.game.units().not_flying.filter(lambda x: x.can_attack_ground)
-		if self.game.known_enemy_units.exists and len(self.game.units().not_flying) > 0 and fUnits:
-			closestFriendly = fUnits.closest_to(self.game.known_enemy_units.closest_to(self.unit))
+		if self.game.cached_enemies.exists and len(self.game.units().not_flying) > 0 and fUnits:
+			closestFriendly = fUnits.closest_to(self.game.cached_enemies.closest_to(self.unit))
 		elif len(self.game.units().not_flying) > 0 and fUnits:
 			closestFriendly = fUnits.closest_to(self.unit)
 		if closestFriendly:
@@ -337,7 +338,7 @@ class WarpPrism:
 		#make sure we don't deliver them to danger
 		(danger, junkEnemy) = self.game.inDanger(self.unit, False, friend_range=8, enemy_range=8)
 		if self.game.time > self.nextdrop and not danger:
-			if self.game.known_enemy_units.exclude_type([ADEPTPHASESHIFT]).exists:
+			if self.game.cached_enemies.exclude_type([ADEPTPHASESHIFT]).exists:
 				#see if there is enemy close enough for a dropoff.
 				enemyTarget = self.game.findGroundTarget(self.unit, can_target_air=False, max_enemy_distance=8, target_hitpoints=True, target_buildings=False)
 				if not enemyTarget:
@@ -351,7 +352,7 @@ class WarpPrism:
 							return True
 				else:
 					# move to nearest enemy ground unit/building because no enemy unit is closer than 5
-					closestEnemy = self.game.known_enemy_units.not_flying.closest_to(self.unit)
+					closestEnemy = self.game.cached_enemies.not_flying.closest_to(self.unit)
 					if self.checkNewAction('move', closestEnemy.position[0], closestEnemy.position[1]):
 						self.game.combinedActions.append(self.unit.move(closestEnemy))
 					return True

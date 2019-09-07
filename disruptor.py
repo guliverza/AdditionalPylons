@@ -71,12 +71,13 @@ class Disruptor:
 		self.runList()
 	
 		#debugging info
-		if _debug or self.unit.is_selected:
-			if self.last_target:
-				spos = Point3((self.unit.position3d.x, self.unit.position3d.y, (self.unit.position3d.z + 1)))
-				self.game._client.debug_line_out(spos, self.last_target, color=Point3((155, 255, 25)))
-			self.game._client.debug_text_3d(self.label, self.unit.position3d)
-			
+		if self.game.debugAllowed:
+			if _debug or self.unit.is_selected:
+				if self.last_target:
+					spos = Point3((self.unit.position3d.x, self.unit.position3d.y, (self.unit.position3d.z + 1)))
+					self.game._client.debug_line_out(spos, self.last_target, color=Point3((155, 255, 25)))
+				self.game._client.debug_text_3d(self.label, self.unit.position3d)
+				
 
 	def runList(self):
 		#check for our disruptor ball and see if we need to cancel it.
@@ -186,7 +187,7 @@ class Disruptor:
 		if targetEnemy:
 			#kitePoint = unit_obj.unit.position.towards(targetEnemy.position, distance=-0.1)
 			kitePoint = self.findKiteBackTarget(targetEnemy)
-			if kitePoint:
+			if len(kitePoint) > 0:
 				self.last_target = kitePoint.position
 				if self.checkNewAction('move', kitePoint[0], kitePoint[1]):
 					self.game.combinedActions.append(self.unit.move(kitePoint))

@@ -180,13 +180,13 @@ class ProtossAgent:
 		protoss_units = [MOTHERSHIP, COLOSSUS, ZEALOT, STALKER, HIGHTEMPLAR, DARKTEMPLAR, SENTRY, PHOENIX, CARRIER, VOIDRAY, WARPPRISM, OBSERVER, IMMORTAL, ADEPT, ORACLE, TEMPEST, DISRUPTOR, ARCHON]
 		protoss_buildings = [NEXUS, PYLON, GATEWAY, CYBERNETICSCORE, ROBOTICSFACILITY, STARGATE, FORGE, FLEETBEACON, TWILIGHTCOUNCIL, ROBOTICSBAY, TEMPLARARCHIVE, DARKSHRINE, ASSIMILATOR, SHIELDBATTERY, PHOTONCANNON]
 		all_units = protoss_buildings + protoss_units
-		enemyThreats = self.game.known_enemy_units.of_type(protoss_units)
+		enemyThreats = self.game.cached_enemies.of_type(protoss_units)
 		for enemy in enemyThreats:
 			#check if already exists, if it doesn't, add it.
 			if not self.enemy_intel.get(enemy.tag):
 				self.enemy_intel.update({enemy.tag:enemy.name})
 					
-		enemyThreats = self.game.known_enemy_units.of_type(protoss_buildings)
+		enemyThreats = self.game.cached_enemies.of_type(protoss_buildings)
 		for enemy in enemyThreats:
 			#check if already exists, if it doesn't, add it.
 			if not self.enemy_intel.get(enemy.tag):

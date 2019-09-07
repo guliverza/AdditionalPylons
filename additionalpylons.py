@@ -6,6 +6,7 @@ from sc2.player import Bot, Computer
 from sc2.constants import *
 from sc2.position import Point2, Point3
 from sc2.unit import Unit
+from sc2.units import Units
 from sc2.ids.ability_id import AbilityId
 from sc2.ids.buff_id import BuffId
 import random
@@ -30,7 +31,7 @@ from protoss_agent import ProtossAgent as protossAgent
 from effects import Effects as effects_obj
 
 
-_version = 'v1.625'
+_version = 'v1.818'
 _collect_data = False  #collect data against protoss enemies if true.
 _trainfile = "data/protoss-training"
 
@@ -121,6 +122,7 @@ class MyBot(sc2.BotAI, effects_obj):
 		self.savingData = _use_data
 		self.shadeCast = False
 		self.lastShadeCast = 0
+		self.debugAllowed = _debug
 
 	async def on_step(self, iteration):
 		#realtime=True fix
@@ -217,7 +219,7 @@ class MyBot(sc2.BotAI, effects_obj):
 				self.debugEffects()
 			await self._client.send_debug()
 			#time.sleep(300)
-		await self.do_actions(self.combinedActions)
+		await self._do_actions(self.combinedActions)
 
 	def on_end(self, result):
 		#self._training_data.saveResult(self.opp_id, 2, result)
@@ -264,11 +266,16 @@ class MyBot(sc2.BotAI, effects_obj):
 			await self.getRallyPoint()
 			self.expPos = await self.get_next_expansion()
 			self.buildingList.load_object(unit)
-		#detect nexus on start
-		if self.last_iter < 3:
-			self.buildingList.load_object(unit)
 
 
+	async def on_start(self):
+		unit = self.units(NEXUS).first
+		self.getDefensivePoint()
+		await self.getRallyPoint()
+		self.expPos = await self.get_next_expansion()
+		self.buildingList.load_object(unit)		
+		
+		
 
 	async def select_closest_worker(self, pos):
 		adj_pos = self.turn3d(pos.position)
@@ -519,7 +526,7 @@ class MyBot(sc2.BotAI, effects_obj):
 	def defend(self, unit_obj):
 		#clear out destructables around the base.
 		for nexus in self.units(NEXUS):
-			items = self.state.destructables.closer_than(15, nexus)
+			items = self.destructables.closer_than(15, nexus)
 			if items:
 				item = items.closest_to(nexus)
 				if item.name == 'CollapsibleTerranTowerDiagonal' or item.name == 'CollapsibleRockTowerDiagonal':
@@ -678,7 +685,7 @@ class MyBot(sc2.BotAI, effects_obj):
 				return False #better targets out there.
 			#kitePoint = unit_obj.unit.position.towards(targetEnemy.position, distance=-0.1)
 			kitePoint = self.findKiteBackTarget(unit_obj, targetEnemy)
-			if kitePoint:
+			if len(kitePoint) > 0:
 				if unit_obj.checkNewAction('move', kitePoint[0], kitePoint[1]):
 					self.combinedActions.append(unit_obj.unit.move(kitePoint))
 				if unit_obj.unit.is_selected or _debug_combat:
@@ -800,14 +807,15 @@ class MyBot(sc2.BotAI, effects_obj):
 		return False
 
 	def getUnitEnemies(self, unit_obj, radius=25):
-		units = None
+		units = Units((), self)
 		if unit_obj.sendHome:
 			units = self.cached_enemies
 		else:
-			units = self.cached_enemies.exclude_type(_exclude_list).closer_than(radius, unit_obj.unit)
-			if len(units) > 0:
-				self.unit_engaged = True
-				self.moveRally = False
+			if self.cached_enemies.exclude_type(_exclude_list):
+				units = self.cached_enemies.exclude_type(_exclude_list).closer_than(radius, unit_obj.unit)
+				if len(units) > 0:
+					self.unit_engaged = True
+					self.moveRally = False
 		return units
 
 	def	canEscape(self, unit_obj):
@@ -986,19 +994,19 @@ class MyBot(sc2.BotAI, effects_obj):
 		#start enemy structures that don't attack out with -1000 pts so they are always below units.
 		if score == 0 and enemy.is_structure:
 			#building, so lets just subtract the distance.
-			#hp_lost = (enemy.health_max + enemy.shield_max) - (enemy.health + enemy.shield)
+			hp_lost = (enemy.health_max + enemy.shield_max) - (enemy.health + enemy.shield)
 			hp_left = (enemy.health + enemy.shield)
 			if enemy.name == 'Pylon':
 				#going less than -400 can result in positive points, might mess things up, but might be good to finish off a pylon - test later.
 				score = self.scorePylon(enemy, unit_obj)
 				if score == 0:
-					#score = (hp_lost - (enemy.health_max + enemy.shield_max))
-					score -= hp_left
+					score = (hp_lost - (enemy.health_max + enemy.shield_max))
+					#score -= hp_left
 			elif enemy.name == 'Bunker':
 				score = 0
 			else:
-				score -= hp_left
-				#score = (hp_lost - (enemy.health_max + enemy.shield_max))
+				#score -= hp_left
+				score = (hp_lost - (enemy.health_max + enemy.shield_max))
 
 		#distance to enemy matters.  Use % of max range distance, then subtract it from 100.
 		dist = 0
@@ -1058,7 +1066,7 @@ class MyBot(sc2.BotAI, effects_obj):
 				if building.name == 'ShieldBattery':
 					score += 100
 				elif building.name == 'PhotonCannon':
-					score += 25
+					score += 50
 				else:
 					score += 15
 		return score
@@ -1641,7 +1649,7 @@ class MyBot(sc2.BotAI, effects_obj):
 		if retreatPoints:
 			#get the center of all the ground units that can attack us.
 			if self.cached_enemies.filter(lambda x: x.can_attack_ground).closer_than(enemy_radius, unit):
-				#enemyThreatsCenter = self.known_enemy_units.filter(lambda x: x.can_attack_ground).closer_than(enemy_radius, unit).center
+				#enemyThreatsCenter = self.cached_enemies.filter(lambda x: x.can_attack_ground).closer_than(enemy_radius, unit).center
 				enemyThreatsCenter = self.center3d(self.cached_enemies.filter(lambda x: x.can_attack_ground).closer_than(enemy_radius, unit))
 				#retreatPoint = max(retreatPoints, key=lambda x: x.distance_to(enemyThreatsCenter) - x.distance_to(unit))
 				retreatPoint = enemyThreatsCenter.position.furthest(retreatPoints)
@@ -1676,7 +1684,7 @@ class MyBot(sc2.BotAI, effects_obj):
 		if retreatPoints:
 			#get the center of all the ground units that can attack us.
 			if self.cached_enemies.filter(lambda x: x.can_attack_ground).closer_than(enemy_radius, unit):
-				#enemyThreatsCenter = self.known_enemy_units.filter(lambda x: x.can_attack_ground).closer_than(enemy_radius, unit).center
+				#enemyThreatsCenter = self.cached_enemies.filter(lambda x: x.can_attack_ground).closer_than(enemy_radius, unit).center
 				enemyThreatsCenter = self.center3d(self.cached_enemies.filter(lambda x: x.can_attack_ground).closer_than(enemy_radius, unit))
 				#retreatPoint = max(retreatPoints, key=lambda x: x.distance_to(enemyThreatsCenter) - x.distance_to(unit))
 				retreatPoint = enemyThreatsCenter.position.furthest(retreatPoints)
@@ -1754,6 +1762,7 @@ class MyBot(sc2.BotAI, effects_obj):
 
 		#get the heightmap offset.
 		nexus = self.units(NEXUS).ready.random
+		#nexus = self.structures(NEXUS).ready.random
 		if nexus:
 			hmval = self.getHeight(nexus.position)
 			self.hm_offset = hmval - nexus.position3d.z - 1
@@ -1848,8 +1857,6 @@ class MyBot(sc2.BotAI, effects_obj):
 			return
 
 		closestEnemyStructure = self.cached_enemies.structure.furthest_to(random.choice(self.enemy_start_locations))
-
-
 		#self.debug_rally_es = closestEnemyStructure.position
 		mid = self.midpoint(closestEnemyStructure.position, self.defensive_pos)
 		#move a little closer to the enemy by getting another midpoint and use it for warpprisms.
@@ -1907,6 +1914,7 @@ class MyBot(sc2.BotAI, effects_obj):
 			#this is our defensive point, get the position 2 distance behind it.
 			if closestRamp.bottom_center.position != closestRamp.top_center.position:
 				self.defensive_pos = closestRamp.bottom_center.towards(closestRamp.top_center, 9)
+
 
 	def findOppId(self):
 		parser = argparse.ArgumentParser()
@@ -2087,7 +2095,8 @@ class MyBot(sc2.BotAI, effects_obj):
 
 
 	def cache_enemies(self):
-		self.cached_enemies = self.known_enemy_units
+		#self.cached_enemies = self.cached_enemies
+		self.cached_enemies = self.enemy_units + self.enemy_structures
 
 	def check_movements(self):
 		new_positions = {}
@@ -2177,7 +2186,7 @@ class MyBot(sc2.BotAI, effects_obj):
 		if retreatPoints:
 			#get the center of all the ground units that can attack us.
 			if enemyThreats:
-				#enemyThreatsCenter = self.known_enemy_units.filter(lambda x: x.can_attack_ground).closer_than(enemy_radius, unit).center
+				#enemyThreatsCenter = self.cached_enemies.filter(lambda x: x.can_attack_ground).closer_than(enemy_radius, unit).center
 				enemyThreatsCenter = self.center3d(enemyThreats)
 				#retreatPoint = max(retreatPoints, key=lambda x: x.distance_to(enemyThreatsCenter) - x.distance_to(unit))
 				retreatPoint = enemyThreatsCenter.position.furthest(retreatPoints)
@@ -2259,7 +2268,7 @@ class MyBot(sc2.BotAI, effects_obj):
 		if retreatPoints:
 			#get the center of all the ground units that can attack us.
 			if self.cached_enemies.filter(lambda x: x.can_attack_air).closer_than(enemy_radius, unit):
-				#enemyThreatsCenter = self.known_enemy_units.filter(lambda x: x.can_attack_ground).closer_than(enemy_radius, unit).center
+				#enemyThreatsCenter = self.cached_enemies.filter(lambda x: x.can_attack_ground).closer_than(enemy_radius, unit).center
 				enemyThreatsCenter = self.center3d(self.cached_enemies.filter(lambda x: x.can_attack_air).closer_than(enemy_radius, unit))
 				#retreatPoint = max(retreatPoints, key=lambda x: x.distance_to(enemyThreatsCenter) - x.distance_to(unit))
 				retreatPoint = enemyThreatsCenter.position.furthest(retreatPoints)
@@ -2304,11 +2313,11 @@ class MyBot(sc2.BotAI, effects_obj):
 		enemyThreats = []
 		if target_buildings:
 			#in_attack_range_of
-			#enemyThreats = self.known_enemy_units.not_flying.closer_than(max_enemy_distance, unit)
+			#enemyThreats = self.cached_enemies.not_flying.closer_than(max_enemy_distance, unit)
 			enemyThreats = self.cached_enemies.not_flying.in_attack_range_of(unit)
 		else:
 			if can_target_air:
-				#enemyThreats = self.known_enemy_units.exclude_type([ADEPTPHASESHIFT]).not_flying.filter(lambda x: x.can_attack_air).closer_than(max_enemy_distance, unit)
+				#enemyThreats = self.cached_enemies.exclude_type([ADEPTPHASESHIFT]).not_flying.filter(lambda x: x.can_attack_air).closer_than(max_enemy_distance, unit)
 				enemyThreats = self.cached_enemies.exclude_type([ADEPTPHASESHIFT]).not_flying.filter(lambda x: x.can_attack_air).in_attack_range_of(unit)
 			else:
 				enemyThreats = self.cached_enemies.exclude_type([ADEPTPHASESHIFT]).not_flying.filter(lambda x: x.can_attack_ground).in_attack_range_of(unit)

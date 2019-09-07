@@ -110,12 +110,13 @@ class Probe:
 			self.gatherList()
 
 		#debugging info
-		if _debug or self.unit.is_selected:
-			if self.last_target:
-				spos = Point3((self.unit.position3d.x, self.unit.position3d.y, (self.unit.position3d.z + 1)))
-				self.game._client.debug_line_out(spos, self.last_target, color=Point3((155, 255, 25)))
-			self.game._client.debug_text_3d(self.label, self.unit.position3d)
-		
+		if self.game.debugAllowed:
+			if _debug or self.unit.is_selected:
+				if self.last_target:
+					spos = Point3((self.unit.position3d.x, self.unit.position3d.y, (self.unit.position3d.z + 1)))
+					self.game._client.debug_line_out(spos, self.last_target, color=Point3((155, 255, 25)))
+				self.game._client.debug_text_3d(self.label, self.unit.position3d)
+			
 ################
 #Role Functions#
 ################
@@ -124,7 +125,7 @@ class Probe:
 		#every 5 seconds, check the assim to see if it's being over-worked.
 		self.checkAssim()
 		self.closestEnemies = self.game.getUnitEnemies(self)
-		if not self.collect_only and self.closestEnemies.amount > 0:
+		if not self.collect_only and len(self.closestEnemies) > 0:
 			#keep safe from effects
 			if self.game.effectSafe(self):
 				self.label = 'Dodging'
@@ -299,7 +300,7 @@ class Probe:
 		#print (str(self.unit.orders).lower())
 		self.enemyWorkers = self.game.getUnitEnemies(self, radius=6)
 		#check for a worker rush incoming, if so, move back to base.
-		if len(self.enemyWorkers.of_type([PROBE,SCV,DRONE])) > 2:
+		if len(self.enemyWorkers) > 0 and len(self.enemyWorkers.of_type([PROBE,SCV,DRONE])) > 2:
 			#go back to work.
 			self.game.unitList.freeNexusBuilders()
 			self.label = 'Incoming Rush'
@@ -350,7 +351,7 @@ class Probe:
 		#get the distance to expansion, if it's more than 1, move to it.
 		#find a mineral patch close to the location and move to it.
 		if not self.nexus_position:
-			#self.nexus_position = self.game.state.vespene_geyser.closer_than(15.0, self.game.expPos).first
+			#self.nexus_position = self.game.vespene_geyser.closer_than(15.0, self.game.expPos).first
 			self.nexus_position = self.game.expPos
 		if not self.nexus_position:
 			return False
@@ -438,7 +439,7 @@ class Probe:
 		startloc = self.game.game_info.player_start_location
 		for possible in self.game.expansion_locations:
 			#if not self.game.units().of_type([NEXUS,PROBE]).closer_than(6, possible).exists:
-			if not self.game.known_enemy_units.closer_than(6, possible).exists:
+			if not self.game.cached_enemies.closer_than(6, possible).exists:
 				distance = sqrt((possible[0] - startloc.position[0])**2 + (possible[1] - startloc.position[1])**2)
 				locations.append([distance, possible])
 			else:
@@ -474,7 +475,7 @@ class Probe:
 		knockoff = 0
 		startloc = self.game.game_info.player_start_location
 		for possible in self.game.expansion_locations:
-			if not self.game.known_enemy_units.closer_than(6, possible).exists:
+			if not self.game.cached_enemies.closer_than(6, possible).exists:
 				distance = sqrt((possible[0] - startloc.position[0])**2 + (possible[1] - startloc.position[1])**2)
 				locations.append([distance, possible])
 			else:
@@ -502,8 +503,8 @@ class Probe:
 		if len(self.unit.orders) == 0:
 			for nexus in self.game.units(NEXUS).ready:
 				#print (self.unit.tag, 'checking for minerals')
-				if self.game.state.mineral_field.closer_than(100, nexus).exists:
-					mf = self.game.state.mineral_field.closer_than(100, nexus).closest_to(self.unit)
+				if self.game.mineral_field.closer_than(100, nexus).exists:
+					mf = self.game.mineral_field.closer_than(100, nexus).closest_to(self.unit)
 					self.game.combinedActions.append(self.unit.gather(mf, queue=False))
 					return True
 		else:
@@ -514,8 +515,8 @@ class Probe:
 		if len(self.unit.orders) == 0:
 			for nexus in self.game.units(NEXUS).ready:
 				#print (self.unit.tag, 'checking for minerals')
-				if self.game.state.mineral_field.closer_than(10, nexus).exists:
-					mf = self.game.state.mineral_field.closer_than(10, nexus).random
+				if self.game.mineral_field.closer_than(10, nexus).exists:
+					mf = self.game.mineral_field.closer_than(10, nexus).random
 					self.game.combinedActions.append(self.unit.gather(mf, queue=False))
 					return True
 		else:
@@ -653,7 +654,7 @@ class Probe:
 		#for nexus in self.game.units(NEXUS).ready:
 		for nexus in nexuslist:
 			#print (self.unit.tag, 'checking for minerals')
-			for mf in self.game.state.mineral_field.closer_than(12, nexus).sorted(lambda x: self.unit.distance_to(nexus.position)):
+			for mf in self.game.mineral_field.closer_than(12, nexus).sorted(lambda x: self.unit.distance_to(nexus.position)):
 				if self.assigned[mf.tag] < 2:
 					#print (self.unit.tag, 'mineral found')
 					return mf
@@ -675,7 +676,7 @@ class Probe:
 	def checkMinerals(self):
 		if not self.vas_miner:
 			#check the tag to see if the mineral still exists.
-			if self.game.state.mineral_field.find_by_tag(self.gather_target.tag):
+			if self.game.mineral_field.find_by_tag(self.gather_target.tag):
 				return True
 
 
@@ -750,7 +751,7 @@ class Probe:
 
 
 	def moveToEnemies(self):
-		closestEnemies = self.game.known_enemy_units.not_flying.exclude_type([ADEPTPHASESHIFT])
+		closestEnemies = self.game.cached_enemies.not_flying.exclude_type([ADEPTPHASESHIFT])
 		if closestEnemies:
 			closestEnemy = closestEnemies.closest_to(self.unit)
 			#get the distance to the closest Enemy and if it's in attack range, then don't move.
@@ -768,9 +769,9 @@ class Probe:
 
 	def moveToEnemiesOld(self):
 		#move to the enemy that is closest to the nexus.
-		if self.game.units(NEXUS).exists and self.game.known_enemy_units.not_flying.exclude_type([ADEPTPHASESHIFT]).exists:
+		if self.game.units(NEXUS).exists and self.game.cached_enemies.not_flying.exclude_type([ADEPTPHASESHIFT]).exists:
 			nexus = self.game.units(NEXUS).random
-			closestEnemy = self.game.known_enemy_units.not_flying.exclude_type([ADEPTPHASESHIFT]).closest_to(nexus)
+			closestEnemy = self.game.cached_enemies.not_flying.exclude_type([ADEPTPHASESHIFT]).closest_to(nexus)
 			#get the distance to the closest Enemy and if it's in attack range, then don't move.
 			if closestEnemy.distance_to(self.unit.position) > self.unit.ground_range + self.unit.radius + closestEnemy.radius - 0.05:
 				self.last_target = Point3((closestEnemy.position3d.x, closestEnemy.position3d.y, (closestEnemy.position3d.z + 1)))
@@ -788,7 +789,7 @@ class Probe:
 		#get a list of mineral fields that are near a nexus, sorted by distance to us and loop to find open space.
 		for nexus in self.game.units(NEXUS).ready:
 			#print (self.unit.tag, 'checking for minerals')
-			for mf in self.game.state.mineral_field.closer_than(10, nexus).sorted(lambda x: self.unit.distance_to(x.position)):
+			for mf in self.game.mineral_field.closer_than(10, nexus).sorted(lambda x: self.unit.distance_to(x.position)):
 				return mf
 		return None		
 			

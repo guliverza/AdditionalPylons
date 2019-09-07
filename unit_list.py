@@ -33,7 +33,6 @@ class UnitList():
 
 	def make_decisions(self, game):
 		self.game = game
-		
 		for unit in self.game.units():
 			obj = self.unit_objects.get(unit.tag)
 			if obj:

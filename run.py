@@ -10,10 +10,10 @@ bot = Bot(Race.Protoss, MyBot())
 #bot = Bot(Race.Random, ExampleBot())
 
 
-#allmaps = ['Bandwidth', 'Ephemeron', 'PrimusQ9', 'Reminiscence', 'Sanglune', 'TheTimelessVoid', 'Urzagol'] # all maps
-allmaps = ['Acropolis', 'Artana', 'CrystalCavern', 'DigitalFrontier', 'OldSunshine', 'Treachery', 'Triton'] # all maps
+#allmaps = ['AutomatonLE', 'CyberForestLE', 'KairosJunctionLE', 'KingsCoveLE', 'NewRepugnancyLE', 'PortAleksanderLE', 'YearZeroLE'] # all maps
+allmaps = ['CyberForestLE', 'KairosJunctionLE', 'KingsCoveLE', 'NewRepugnancyLE'] #, 'PortAleksanderLE', 'YearZeroLE'] # all maps
 
-#allmaps = ['CrystalCavern'] # wierd maps only
+#allmaps = ['DigitalFrontier'] # test maps only
 
 _difficulty = random.choice([Difficulty.CheatInsane, Difficulty.CheatMoney, Difficulty.CheatVision])
 
@@ -22,7 +22,7 @@ _realtime = False
 
 _difficulty = Difficulty.CheatInsane #CheatInsane, CheatMoney, CheatVision
 _opponent = random.choice([Race.Zerg, Race.Terran, Race.Protoss, Race.Random])
-_opponent = Race.Terran
+_opponent = Race.Zerg
 
 # Start game
 if __name__ == '__main__':

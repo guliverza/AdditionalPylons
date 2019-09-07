@@ -39,8 +39,9 @@ class Gateway:
 		self.label += " {}".format(str(self.queued))
 #		self.label += "- {}".format(str(unit.is_idle))
 		#debugging info
-		if _debug or self.unit.is_selected:
-			self.game._client.debug_text_3d(self.label, self.unit.position3d)
+		if self.game.debugAllowed:
+			if _debug or self.unit.is_selected:
+				self.game._client.debug_text_3d(self.label, self.unit.position3d)
 
 	async def runList(self):
 
@@ -193,8 +194,8 @@ class Gateway:
 		#loop the pylons and find one that isn't in range of an enemy.
 		#if no super pylons exist, find any pylon and do it again.
 		closestEnemy = None
-		if len(self.game.known_enemy_units) > 0:
-			closestEnemy = self.game.known_enemy_units.closest_to(self.game.start_location)
+		if len(self.game.cached_enemies) > 0:
+			closestEnemy = self.game.cached_enemies.closest_to(self.game.start_location)
 		if closestEnemy and self.game.units(PYLON).ready.exists:
 			if len(self.game.units.of_type([NEXUS, WARPGATE])) > 0:
 	

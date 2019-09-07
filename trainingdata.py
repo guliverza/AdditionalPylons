@@ -178,7 +178,8 @@ class TrainingData:
 			elif race == Race.Protoss:
 				return ['Stalker', 'Zealot', 'Immortal']
 			elif race == Race.Terran:			
-				return ['Marine', 'Medivac', 'WidowMine', 'Marauder', 'Viking', 'SiegeTank', 'VikingFighter', 'VikingAssault']
+#				return ['Marine', 'Medivac', 'WidowMine', 'Marauder', 'Viking', 'SiegeTank', 'VikingFighter', 'VikingAssault']
+				return ['Reaper', 'Cyclone', 'Viking', 'Banshee']
 		return []
 	
 	def saveUnitResult(self, opp_id, units, race):

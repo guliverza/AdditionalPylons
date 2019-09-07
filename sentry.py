@@ -73,12 +73,13 @@ class Sentry:
 		self.runList()
 
 		#debugging info
-		if _debug or self.unit.is_selected:
-			if self.last_target:
-				spos = Point3((self.unit.position3d.x, self.unit.position3d.y, (self.unit.position3d.z + 1)))
-				self.game._client.debug_line_out(spos, self.last_target, color=Point3((155, 255, 25)))
-	
-			self.game._client.debug_text_3d(self.label, self.unit.position3d)
+		if self.game.debugAllowed:
+			if _debug or self.unit.is_selected:
+				if self.last_target:
+					spos = Point3((self.unit.position3d.x, self.unit.position3d.y, (self.unit.position3d.z + 1)))
+					self.game._client.debug_line_out(spos, self.last_target, color=Point3((155, 255, 25)))
+		
+				self.game._client.debug_text_3d(self.label, self.unit.position3d)
 
 
 	def runList(self):
@@ -251,8 +252,8 @@ class Sentry:
 		#find the friendly unit that is closest to enemy and move towards it, or just move to the closest friendly if no enemies fround
 		fUnits = self.game.units().exclude_type([SENTRY,WARPPRISM,PROBE]).not_flying.filter(lambda x: x.can_attack_ground)
 		closestFriendly = None
-		if self.game.known_enemy_units.exists and fUnits:
-			closestFriendly = fUnits.closest_to(self.game.known_enemy_units.closest_to(self.unit))
+		if self.game.cached_enemies.exists and fUnits:
+			closestFriendly = fUnits.closest_to(self.game.cached_enemies.closest_to(self.unit))
 		elif fUnits:
 			closestFriendly = fUnits.closest_to(self.unit)
 		if closestFriendly:

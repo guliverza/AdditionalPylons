@@ -66,12 +66,13 @@ class Observer:
 			self.runList()
 
 		#debugging info
-		if _debug or self.unit.is_selected:
-			if self.last_target:
-				spos = Point3((self.unit.position3d.x, self.unit.position3d.y, (self.unit.position3d.z + 1)))
-				self.game._client.debug_line_out(spos, self.last_target, (155, 255, 25))
-			self.game._client.debug_text_3d(self.label, self.unit.position3d)
-
+		if self.game.debugAllowed:
+			if _debug or self.unit.is_selected:
+				if self.last_target:
+					spos = Point3((self.unit.position3d.x, self.unit.position3d.y, (self.unit.position3d.z + 1)))
+					self.game._client.debug_line_out(spos, self.last_target, (155, 255, 25))
+				self.game._client.debug_text_3d(self.label, self.unit.position3d)
+	
 
 
 	def expansionList(self):
@@ -193,7 +194,7 @@ class Observer:
 	
 	def enemyIntel(self):
 		#if we have enemies around us and there isn't another obsever within 12 distance, go into scout mode.
-		if self.game.units(OBSERVER).closer_than(12, self.unit).amount == 1 and self.game.known_enemy_units.amount > 0:
+		if self.game.units(OBSERVER).closer_than(12, self.unit).amount == 1 and self.game.cached_enemies.amount > 0:
 			#found enemies, need to use our ability here if possible.
 			if self.checkNewAction('stop', 0, 0):
 				self.game.combinedActions.append(self.unit.stop())

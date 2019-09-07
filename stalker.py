@@ -105,12 +105,13 @@ class Stalker:
 	
 
 		#debugging info
-		if _debug or self.unit.is_selected:
-			if self.last_target:
-				spos = Point3((self.unit.position3d.x, self.unit.position3d.y, (self.unit.position3d.z + 1)))
-				self.game._client.debug_line_out(spos, self.last_target, color=Point3((155, 255, 25)))
-	
-			self.game._client.debug_text_3d(self.label, self.unit.position3d)
+		if self.game.debugAllowed:
+			if _debug or self.unit.is_selected:
+				if len(self.last_target) > 0:
+					spos = Point3((self.unit.position3d.x, self.unit.position3d.y, (self.unit.position3d.z + 1)))
+					self.game._client.debug_line_out(spos, self.last_target, color=Point3((155, 255, 25)))
+		
+				self.game._client.debug_text_3d(self.label, self.unit.position3d)
 		
 		
 		
@@ -128,9 +129,6 @@ class Stalker:
 		
 		self.closestEnemies = self.game.getUnitEnemies(self)
 		if self.closestEnemies.amount > 0:
-			
-			
-			
 			#1 priority is always attack first if we can
 			if self.game.attack(self):
 				self.label = 'Attacking'

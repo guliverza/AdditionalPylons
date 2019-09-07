@@ -9,7 +9,7 @@ total_async_functions = 0
 total_classes = 0
 file_count = 0
 path = os.path.dirname(os.path.abspath(os.path.join(os.getcwd(), "AdditionalPylons")))  # "name" for project folder name
-include = ["additionalpylons.py", "adept.py", "archive.py", "archon.py", "builder.py", "building_list.py", "carrier.py", "colossus.py", "cybercore.py", "disruptor.py", "disruptor_phased.py", "fleet.py", "forge.py", "gateway.py", "hightemplar.py", "immortal.py", "mothership.py", "nexus.py", "observer.py", "phoenix.py", "probe.py", "protoss_agent.py", "robo.py", "robobay.py", "sentry.py", "shade.py", "stalker.py", "stargate.py", "strategist.py", "tempest.py", "trainer.py", "trainingdata.py", "twilight.py", "unit_counters.py", "unit_list.py", "voidray.py", "zealot.py"]  # "name" for filename, "\\name\\" for folders
+include = ["additionalpylons.py", "adept.py", "archive.py", "archon.py", "builder.py", "building_list.py", "carrier.py", "colossus.py", "cybercore.py", "disruptor.py", "disruptor_phased.py", "effects.py", "fleet.py", "forge.py", "gateway.py", "hightemplar.py", "immortal.py", "mothership.py", "nexus.py", "observer.py", "phoenix.py", "probe.py", "protoss_agent.py", "robo.py", "robobay.py", "sentry.py", "shade.py", "stalker.py", "stargate.py", "strategist.py", "tempest.py", "trainer.py", "trainingdata.py", "twilight.py", "unit_counters.py", "unit_list.py", "voidray.py", "warpprism.py", "zealot.py"]  # "name" for filename, "\\name\\" for folders
 for filename in glob.glob(f"{path}/**/*.py", recursive=True):
     if any([string in filename for string in include]):
         file_count += 1

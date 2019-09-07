@@ -61,9 +61,10 @@ class Nexus:
 		await self.runList()
 
 		#debugging info
-		if _debug or self.unit.is_selected:
-			self.debugit()
-			self.game._client.debug_text_3d(self.label, self.unit.position3d)
+		if self.game.debugAllowed:
+			if _debug or self.unit.is_selected:
+				self.debugit()
+				self.game._client.debug_text_3d(self.label, self.unit.position3d)
 
 
 	async def runList(self):
@@ -382,11 +383,11 @@ class Nexus:
 		#front = self.unit.position + Point2((cos(self.unit.facing), sin(self.unit.facing))) * 2
 		
 		#find the edge of the minerals around us.
-		if self.game.state.mineral_field.closer_than(15, self.unit):
+		if self.game.mineral_field.closer_than(15, self.unit):
 			
-			mins = self.game.state.mineral_field.closer_than(15, self.unit)
-			vasp = self.game.state.vespene_geyser.closer_than(15, self.unit)
-			mf = Units((mins + vasp))
+			mins = self.game.mineral_field.closer_than(15, self.unit)
+			vasp = self.game.vespene_geyser.closer_than(15, self.unit)
+			mf = Units((mins + vasp), self.game)
 			f_distance = 0
 			mineral_1 = None
 			mineral_2 = None

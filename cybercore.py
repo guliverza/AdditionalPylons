@@ -42,8 +42,9 @@ class CyberCore:
 			self.label = 'Researching {}'.format(self.current_research)
 
 		#debugging info
-		if _debug or self.unit.is_selected:
-			self.game._client.debug_text_3d(self.label, self.unit.position3d)
+		if self.game.debugAllowed:
+			if _debug or self.unit.is_selected:
+				self.game._client.debug_text_3d(self.label, self.unit.position3d)
 
 	async def runList(self):
 		#check if we need to mark a research as finished.

@@ -107,11 +107,12 @@ class VoidRay:
 			self.runList()
 		
 		#debugging info
-		if _debug or self.unit.is_selected:
-			if self.last_target:
-				spos = Point3((self.unit.position3d.x, self.unit.position3d.y, (self.unit.position3d.z + 1)))
-				self.game._client.debug_line_out(spos, self.last_target, color=Point3((155, 255, 25)))
-			self.game._client.debug_text_3d(self.label, self.unit.position3d)
+		if self.game.debugAllowed:
+			if _debug or self.unit.is_selected:
+				if self.last_target:
+					spos = Point3((self.unit.position3d.x, self.unit.position3d.y, (self.unit.position3d.z + 1)))
+					self.game._client.debug_line_out(spos, self.last_target, color=Point3((155, 255, 25)))
+				self.game._client.debug_text_3d(self.label, self.unit.position3d)
 
 	def runList(self):
 
@@ -252,8 +253,8 @@ class VoidRay:
 		return False
 
 	def cancelPrismatic(self):
-		if AbilityId.VOIDRAYSWARMDAMAGEBOOSTCANCEL_CANCEL in self.abilities and self.game.can_afford(VOIDRAYSWARMDAMAGEBOOSTCANCEL_CANCEL):
-			self.game.combinedActions.append(self.unit(AbilityId.VOIDRAYSWARMDAMAGEBOOSTCANCEL_CANCEL))
+		if AbilityId.CANCEL_VOIDRAYPRISMATICALIGNMENT in self.abilities and self.game.can_afford(CANCEL_VOIDRAYPRISMATICALIGNMENT):
+			self.game.combinedActions.append(self.unit(AbilityId.CANCEL_VOIDRAYPRISMATICALIGNMENT))
 			return True
 				
 	def armorDPSBuff(self):

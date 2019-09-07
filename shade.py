@@ -57,13 +57,14 @@ class Shade:
 		self.runList()
 
 		#debugging info
-		if _debug or self.unit.is_selected:
-			if self.owner:
-				opos = Point3((self.owner.position3d.x, self.owner.position3d.y, (self.owner.position3d.z + 1)))
-				spos = Point3((self.unit.position3d.x, self.unit.position3d.y, (self.unit.position3d.z + 1)))
-				self.game._client.debug_line_out(spos, opos, color=Point3((155, 255, 25)))
-			lb = "{} ||| {}".format(str(self.ownerOrder), self.label)
-			self.game._client.debug_text_3d(lb, self.unit.position3d)
+		if self.game.debugAllowed:
+			if _debug or self.unit.is_selected:
+				if self.owner:
+					opos = Point3((self.owner.position3d.x, self.owner.position3d.y, (self.owner.position3d.z + 1)))
+					spos = Point3((self.unit.position3d.x, self.unit.position3d.y, (self.unit.position3d.z + 1)))
+					self.game._client.debug_line_out(spos, opos, color=Point3((155, 255, 25)))
+				lb = "{} ||| {}".format(str(self.ownerOrder), self.label)
+				self.game._client.debug_text_3d(lb, self.unit.position3d)
 
 
 	def runList(self):
@@ -106,9 +107,9 @@ class Shade:
 		if self.cachedTarget:
 			return self.cachedTarget
 		self.cachedTarget = townhall
-		if self.game.state.mineral_field.closer_than(15, townhall):
-			mins = self.game.state.mineral_field.closer_than(15, townhall)
-			vasp = self.game.state.vespene_geyser.closer_than(15, townhall)
+		if self.game.mineral_field.closer_than(15, townhall):
+			mins = self.game.mineral_field.closer_than(15, townhall)
+			vasp = self.game.vespene_geyser.closer_than(15, townhall)
 			mf = Units((mins + vasp))
 			f_distance = 0
 			mineral_1 = None
@@ -274,7 +275,7 @@ class Shade:
 		#check if we are closer than the owners target, if so, do not cancel.
 		if self.owner:
 			ownerTarget = self.game.unitList.unitTarget(self.owner)
-			if ownerTarget:
+			if ownerTarget is not None:
 				dist = owner_pos.distance_to(ownerTarget)
 				our_dist = self.unit.distance_to(ownerTarget)
 				if our_dist < dist:
@@ -312,8 +313,8 @@ class Shade:
 		
 	def moveToEnemies(self):
 		# move to nearest enemy ground unit/building because no enemy unit is closer than 5
-		if self.game.known_enemy_units.exclude_type([ADEPTPHASESHIFT]).not_flying.exists:
-			closestEnemy = self.game.known_enemy_units.exclude_type([ADEPTPHASESHIFT]).not_flying.furthest_to(self.unit)
+		if self.game.cached_enemies.exclude_type([ADEPTPHASESHIFT]).not_flying.exists:
+			closestEnemy = self.game.cached_enemies.exclude_type([ADEPTPHASESHIFT]).not_flying.furthest_to(self.unit)
 			if self.checkNewAction('move', closestEnemy.position[0], closestEnemy.position[1]):
 				self.game.combinedActions.append(self.unit.move(closestEnemy))
 			return True
