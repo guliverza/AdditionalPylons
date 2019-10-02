@@ -46,11 +46,13 @@ _debug_counters = _ini_parse['Debug'].getboolean('debug_counters')
 _debug_effects = _ini_parse['Debug'].getboolean('debug_effects')
 _debug_combat = _ini_parse['Debug'].getboolean('debug_combat')
 _local_ladder = _ini_parse['Debug'].getboolean('local_ladder')
+_chat_info = _ini_parse['Debug'].getboolean('chat_info')
 _use_data = _ini_parse['Strategy'].getboolean('use_data')
 _test_strat_id = int(_ini_parse['Strategy']['test_strat_id'])
 _zerg_race_strat_id = int(_ini_parse['Strategy']['zerg_race_strat_id'])
 _protoss_race_strat_id = int(_ini_parse['Strategy']['protoss_race_strat_id'])
 _terran_race_strat_id = int(_ini_parse['Strategy']['terran_race_strat_id'])
+
 _exclude_list = {ADEPTPHASESHIFT,INTERCEPTOR,EGG,LARVA}
 
 class MyBot(sc2.BotAI, effects_obj):
@@ -123,6 +125,7 @@ class MyBot(sc2.BotAI, effects_obj):
 		self.shadeCast = False
 		self.lastShadeCast = 0
 		self.debugAllowed = _debug
+		self.chat_info = _chat_info
 
 	async def on_step(self, iteration):
 		#realtime=True fix
@@ -141,6 +144,7 @@ class MyBot(sc2.BotAI, effects_obj):
 		self.check_movements()
 		#check to see if the amount of enemy buildings has changed, then find a new rally point if so.
 		await self.check_enemy_structures()
+		
 
 		#put all effect positions to be dodged into a list.
 		self.addEffects()
@@ -156,7 +160,7 @@ class MyBot(sc2.BotAI, effects_obj):
 			self._next_endgame_check = self.time + 1
 
 		#say GL and give version info for debugging.
-		if not self.intro_said and self.time > 4:
+		if _chat_info and not self.intro_said and self.time > 4:
 			#await self._client.chat_send(self._strat_manager.unitCounter.getIntroSaying(), team_only=False)
 			await self._client.chat_send(self.intro_value, team_only=False)
 			if _use_data:
@@ -525,16 +529,16 @@ class MyBot(sc2.BotAI, effects_obj):
 
 	def defend(self, unit_obj):
 		#clear out destructables around the base.
-		for nexus in self.units(NEXUS):
-			items = self.destructables.closer_than(15, nexus)
-			if items:
-				item = items.closest_to(nexus)
-				if item.name == 'CollapsibleTerranTowerDiagonal' or item.name == 'CollapsibleRockTowerDiagonal':
-					continue
-				unit_obj.game.combinedActions.append(unit_obj.unit.attack(item))
-				unit_obj.last_target = None
-				unit_obj.last_action = 'Destructables'
-				return True
+		# for nexus in self.units(NEXUS):
+		# 	items = self.destructables.closer_than(15, nexus)
+		# 	if items:
+		# 		item = items.closest_to(nexus)
+		# 		if item.name == 'CollapsibleTerranTowerDiagonal' or item.name == 'CollapsibleRockTowerDiagonal':
+		# 			continue
+		# 		unit_obj.game.combinedActions.append(unit_obj.unit.attack(item))
+		# 		unit_obj.last_target = None
+		# 		unit_obj.last_action = 'Destructables'
+		# 		return True
 
 		if self.defensive_pos and unit_obj.unit.distance_to(self.defensive_pos) > 5:
 			if unit_obj.checkNewAction('move', self.defensive_pos.x, self.defensive_pos.y):

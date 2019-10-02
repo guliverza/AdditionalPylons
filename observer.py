@@ -165,7 +165,6 @@ class Observer:
 		self.last_target = None
 
 
-
 	def keepDistance(self):
 		#find other observers that are closer than 11 distance away from us, and get the closest.
 		if self.game.units(OBSERVER).tags_not_in([self.unit.tag]).closer_than(11, self.unit).exists:

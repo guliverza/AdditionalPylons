@@ -233,12 +233,12 @@ class UnitCounter:
 				[['Immortal', 0.33]],
 				],
 			'LurkerMP': [
-				[['Observer', 0.25], ['Disruptor', 0.15]],
-				[['Observer', 0.25], ['Immortal', 0.5]],
+				[['Observer', 0.5], ['Disruptor', 0.25]],
+				[['Observer', 0.5], ['Immortal', 0.5]],
 				],
 			'LurkerMPBurrowed': [
-				[['Observer', 0.25], ['Disruptor', 0.15]],
-				[['Observer', 0.25], ['Immortal', 0.5]],
+				[['Observer', 0.5], ['Disruptor', 0.25]],
+				[['Observer', 0.5], ['Immortal', 0.5]],
 				],			
 			'Corruptor': [
 				[['VoidRay', 1]],

@@ -33,10 +33,17 @@ class UnitList():
 
 	def make_decisions(self, game):
 		self.game = game
+		self.update_units()
 		for unit in self.game.units():
 			obj = self.unit_objects.get(unit.tag)
 			if obj:
 				obj.make_decision(self.game, unit)
+
+	def update_units(self):
+		for unit in self.game.units():
+			obj = self.unit_objects.get(unit.tag)
+			if obj:
+				obj.unit = unit	
 
 	def getObjectByTag(self, unit_tag):
 		if self.unit_objects.get(unit_tag):

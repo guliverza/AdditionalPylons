@@ -263,7 +263,8 @@ class Strategist:
 			self.build.can_build_pylons = True
 			self.build.can_build_assimilators = True
 			self.stage1complete = True
-			await self.game._client.chat_send(self.unitCounter.gets1successSaying(), team_only=False)	
+			if self.game.chat_info:
+				await self.game._client.chat_send(self.unitCounter.gets1successSaying(), team_only=False)	
 
 	async def setup_onebase_production(self):
 		#this opener will build one base with 3 production buildings quickly.
@@ -302,7 +303,8 @@ class Strategist:
 		if self.startBuildingCount >= 4:
 			self.build.can_build_assimilators = True
 			self.stage1complete = True
-			await self.game._client.chat_send(self.unitCounter.gets1successSaying(), team_only=False)
+			if self.game.chat_info:
+				await self.game._client.chat_send(self.unitCounter.gets1successSaying(), team_only=False)
 			return
 
 	async def setup_onebase_defense(self):
@@ -365,7 +367,8 @@ class Strategist:
 			self.build.can_build_pylons = True
 			self.build.can_build_assimilators = True
 			self.stage1complete = True
-			await self.game._client.chat_send(self.unitCounter.gets1successSaying(), team_only=False)
+			if self.game.chat_info:
+				await self.game._client.chat_send(self.unitCounter.gets1successSaying(), team_only=False)
 
 	async def setup_twobase_production(self):
 		#build 1st pylon.
@@ -414,7 +417,8 @@ class Strategist:
 			self.build.can_build_pylons = True
 			self.build.can_build_assimilators = True
 			self.stage1complete = True
-			await self.game._client.chat_send(self.unitCounter.gets1successSaying(), team_only=False)	
+			if self.game.chat_info:
+				await self.game._client.chat_send(self.unitCounter.gets1successSaying(), team_only=False)	
 
 	async def setup_twobase_defense(self):
 		#build the pylon that the cannons will be placed near.
@@ -507,7 +511,8 @@ class Strategist:
 			self.build.can_build_pylons = True
 			self.build.can_build_assimilators = True
 			self.stage1complete = True
-			await self.game._client.chat_send(self.unitCounter.gets1successSaying(), team_only=False)	
+			if self.game.chat_info:
+				await self.game._client.chat_send(self.unitCounter.gets1successSaying(), team_only=False)	
 
 
 #################

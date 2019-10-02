@@ -178,6 +178,8 @@ class Gateway:
 		####at some point, lets just build zealots to fill supply.
 		if self.game.minerals > 2000 and self.game.vespene < 200:
 			return 'Zealot'
+		if self.game.minerals > 5000:
+			return 'Zealot'
 			
 		self.label = 'Allowing resources elsewhere'
 		return None	
