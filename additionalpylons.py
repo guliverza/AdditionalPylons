@@ -1100,7 +1100,7 @@ class MyBot(sc2.BotAI, effects_obj):
 			return topEnemy
 
 	def findEnergyTarget(self, unit_obj, ability_range):
-		enemyThreats = unit_obj.closestEnemies.filter(lambda x: x.energy > 0 and x.distance_to(unit_obj.unit) < ability_range).sorted(lambda x: x.distance_to(unit_obj.unit))
+		enemyThreats = unit_obj.closestEnemies.filter(lambda x: x.energy > 50 and x.distance_to(unit_obj.unit) < ability_range).sorted(lambda x: x.distance_to(unit_obj.unit))
 		if enemyThreats.exists:
 			return enemyThreats[0]
 
