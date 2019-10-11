@@ -42,7 +42,8 @@ class UnitCounter:
 			'Disruptor': 8, 
 			'DarkTemplar': 8,
 			'Observer': 2,
-			'Mothership': 8
+			'Mothership': 8,
+			'Archon': 4,
 		}
 
 		
@@ -142,11 +143,6 @@ class UnitCounter:
 
 		}
 		
-		self.supportTable = {
-			'Sentry': ['Ground', 20],
-			'WarpPrism': ['GroundSupply', 32]
-		}
-		
 		self.counterTable = {
 			#zerg counters
 			'SpineCrawler': [
@@ -164,44 +160,47 @@ class UnitCounter:
 			],
 			'SporeCrawlerUprooted': [
 				[['Zealot', 0.01]],
-			],					
+			],
 			'Overlord': [
 #				[['Colossus', 0.05], ['Stalker', 0.25], ['Adept', 0.25], ['Immortal', 0.1]],
-				[['Stalker', 0.01]]
+				[['Stalker', 0.01]],
 				],
 			'OverlordTransport': [
-				[['Phoenix', 1]]
+				[['Stalker', 1]],
+				[['Phoenix', 1]],
 				],
 			'Baneling': [
-				[['Stalker', 0.5]],
-				[['Stalker', 1]],
+				[['Colossus', 0.2]],
+				[['Archon', 0.2]],
+				[['Stalker', 0.25]],
 				],
 			'Zergling': [
 				[['Colossus', 0.1], ['Adept', 0.5], ['Zealot', 0.25]],
 				[['Adept', 0.5], ['Zealot', 0.25]],
 				[['Zealot', 0.5]],
 				],
-			'ZerglingBurrowed': [			
+			'ZerglingBurrowed': [
 				[['Colossus', 0.05], ['Zealot', 0.25]],
 				[['Zealot', 0.5]],
 				],
 			'Hydralisk': [
 				[['Colossus', 0.1], ['Sentry', 0.05], ['Zealot', 0.5]],
-				[['Immortal', 0.25],['Sentry', 0.05], ['Zealot', 0.25]],				
+				[['Immortal', 0.25],['Sentry', 0.05], ['Zealot', 0.25]],
 				[['Stalker', 1],['Sentry', 0.5], ['Zealot', 0.25]],
 				[['Zealot', 2]],
 				],
 			'HydraliskBurrowed': [
 				[['Colossus', 0.1], ['Sentry', 0.05], ['Zealot', 0.5]],
-				[['Immortal', 0.25],['Sentry', 0.05], ['Zealot', 0.25]],				
+				[['Immortal', 0.25],['Sentry', 0.05], ['Zealot', 0.25]],
 				[['Stalker', 1],['Sentry', 0.5], ['Zealot', 0.25]],
 				[['Zealot', 2]],
 				],
 			'Mutalisk': [
 				[['Phoenix', 0.66]],
+				[['Archon', 0.25]],
 				[['Stalker', 2], ['Zealot', 0.25]],
 				],
-			'Ultralisk': [				
+			'Ultralisk': [
 				[['VoidRay', 1], ['Immortal', 2], ['Zealot', 2]],
 				[['VoidRay', 1], ['Zealot', 2]],
 				[['Immortal', 2], ['Zealot', 2]],
@@ -230,6 +229,7 @@ class UnitCounter:
 				[['Stalker', 1]],
 				],
 			'Ravager': [
+				[['Stalker', 1], ['Zealot', 1]],
 				[['Immortal', 0.33]],
 				],
 			'LurkerMP': [
@@ -239,7 +239,7 @@ class UnitCounter:
 			'LurkerMPBurrowed': [
 				[['Observer', 0.5], ['Disruptor', 0.25]],
 				[['Observer', 0.5], ['Immortal', 0.5]],
-				],			
+				],
 			'Corruptor': [
 				[['VoidRay', 1]],
 				[['Stalker', 1], ['Zealot', 0.25]],
@@ -252,7 +252,7 @@ class UnitCounter:
 				[['VoidRay', 1]],
 				[['Stalker', 3]],
 				],
-			
+
 			#protoss counters
 			'Zealot': [
 				[['Adept', 0.75]],
@@ -350,7 +350,7 @@ class UnitCounter:
 				[['Stalker', 0.01]],
 				],
 			'PlanetaryFortress':[
-				[['Immortal', 2], ['Sentry', 0.05], ['Zealot', 1]],	
+				[['Immortal', 2], ['Sentry', 0.05], ['Zealot', 1]],
 				[['Zealot', 3], ['Sentry', 0.05]],
 				],
 			'Marine': [
@@ -362,23 +362,22 @@ class UnitCounter:
 				[['Stalker', 0.5]],
 				],
 			'Marauder': [
-				[['Tempest', 1]],
+                [['Zealot', 2]],
+				[['Zealot', 1], ['Immortal', 0.2]],
 				[['Zealot', 1], ['Sentry', 0.05]],
-				[['Zealot', 2]],
 				],
 			'Ghost':  [
+                [['Stalker', 1], ['Observer', 0.25]],
 				[['Colossus', 0.5], ['Tempest', 0.5], ['Observer', 0.25]],
-				[['Stalker', 1], ['Observer', 0.25]],
 				],
 			'Hellion': [
-				[['Colossus', 0.5], ['Zealot', 0.2], ['Stalker', 0.1]],
 				[['Stalker', 1.5]],
-				[['Zealot', 1]]
+                [['Colossus', 0.5], ['Zealot', 0.2], ['Stalker', 0.1]],
+				[['Adept', 0.75]]
 				],
 			'HellionTank': [
+                [['Stalker', 1.5]],
 				[['Colossus', 0.5], ['Zealot', 0.2], ['Stalker', 0.1]],
-				[['Stalker', 1.5]],
-				[['Zealot', 1]]
 				],
 			'WidowMineBurrowed': [
 				[['Disruptor', 0.1], ['Observer', 0.15]],
@@ -394,14 +393,14 @@ class UnitCounter:
 				[['Zealot', 1]],
 				],
 			'SiegeTankSieged': [
-				[['Tempest', 1]],
-				[['Stalker', 1]],
+                [['Immortal', 1]],
 				[['Zealot', 2]],
-				],			
+                [['Tempest', 1]],
+				],
 			'SiegeTank': [
-				[['Tempest', 1]],
-				[['Stalker', 1]],
+                [['Immortal', 1]],
 				[['Zealot', 2]],
+                [['Tempest', 1]],
 				],
 			'Thor': [
 				[['Immortal', 1.5]],
@@ -414,13 +413,12 @@ class UnitCounter:
 				[['Zealot', 4]],
 				],
 			'Viking': [
-				[['Tempest', 0.4]],
 				[['Stalker', 1]],
+                [['Phoenix', 1]],
 				],
 			'Medivac': [
-				[['Tempest', 1]],
-#				[['Phoenix', 2]],
-				[['Stalker', 1]],
+                [['Stalker', 1]],
+#				[['Phoenix', 1]],
 				],
 			'LiberatorAG': [
 				[['Tempest', 1]],
@@ -433,29 +431,33 @@ class UnitCounter:
 				[['Stalker', 2]],
 				],
 			'Raven': [
-				[['Tempest', 1]],
 				[['Phoenix', 1]],
 				[['Stalker', 1]],
 				],
 			'Banshee': [
 				[['Stalker', 1], ['Observer', 0.25]],
+				[['Phoenix', 1], ['Observer', 0.25]],
 				],
 			'Battlecruiser': [
-				[['Tempest', 3], ['Stalker', 1]],
+				[['Tempest', 3]],
 				[['Stalker', 4]]
 				],
 			'VikingFighter': [
-				[['Tempest', 0.4]],
 				[['Stalker', 1]],
 				],
 			'VikingAssault': [
-				[['Tempest', 0.4]],
 				[['Stalker', 1]],
 				],
 			'MissileTurret': [
 				[['Sentry', 0.01]],
+				[['Zealot', 0.01]],
 				],
-		}		
+		}
+		self.supportTable = {
+			'Sentry': ['Ground', 20],
+			'WarpPrism': ['GroundSupply', 32]
+		}
+
 
 		
 		self.cargoSize = {
@@ -524,7 +526,8 @@ class UnitCounter:
 			'HighTemplar': ['Gateway', 'CyberneticsCore', 'TwilightCouncil', 'TemplarArchive'],
 			'Disruptor': ['Gateway', 'CyberneticsCore', 'RoboticsFacility', 'RoboticsBay'],
 			'DarkTemplar': ['Gateway', 'CyberneticsCore', 'TwilightCouncil', 'DarkShrine'],
-			'Observer': ['Gateway', 'CyberneticsCore', 'RoboticsFacility']
+			'Observer': ['Gateway', 'CyberneticsCore', 'RoboticsFacility'],
+            'Archon': ['Gateway', 'CyberneticsCore', 'TwilightCouncil', 'TemplarArchive'],
 		}
 		
 		self.nameCross = {

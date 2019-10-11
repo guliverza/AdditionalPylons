@@ -81,7 +81,7 @@ class Twilight:
 				return True				
 
 	def researchGlaives(self):
-		if self.game.units(ADEPT).amount > 2 and not self._resonating_glaives_started and not self._resonating_glaives_researched:
+		if self.game.units(ADEPT).amount > 4 and not self._resonating_glaives_started and not self._resonating_glaives_researched:
 			if AbilityId.RESEARCH_ADEPTRESONATINGGLAIVES in self.abilities and self.game.can_afford(RESEARCH_ADEPTRESONATINGGLAIVES):
 				self.game.combinedActions.append(self.unit(AbilityId.RESEARCH_ADEPTRESONATINGGLAIVES))
 				self._resonating_glaives_started = True
