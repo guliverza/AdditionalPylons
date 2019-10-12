@@ -40,10 +40,4 @@ if __name__ == '__main__':
         print("Player1: " + str(player1))
         player2 = Bot(Race.Protoss, MyBot())
         print("Player2: " + str(player2))
-        n = 1
-        filename = False
-        while not filename or os.path.exists(filename):
-            filename = str(sc2map.name) + "-" + str(player1.name) + "-AdditionalPylions-" + str(n) + ".SC2Replay"
-            n += 1
-        print("Replay name: " + filename)
-        sc2.run_game(sc2map, [player1, player2], realtime=_realtime, save_replay_as=filename)
+        sc2.run_game(sc2map, [player1, player2], realtime=_realtime)
