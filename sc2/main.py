@@ -243,7 +243,7 @@ async def _play_game(
     else:
         result = await _play_game_ai(client, player_id, player.ai, realtime, step_time_limit, game_time_limit)
 
-    logging.info(f"Result for player {player_id} - {player.name if player.name else str(player)}: {result._name_}")
+    logging.info(f"Result for player {player_id} - {player.name if player.name else str(player)}: {result._name_ if result._name_ else str(result)}")
 
     return result
 
