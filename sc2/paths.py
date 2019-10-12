@@ -7,7 +7,7 @@ from pathlib import Path
 logger = logging.getLogger(__name__)
 
 BASEDIR = {
-    "Windows": "C:/Program Files (x86)/StarCraft II",
+    "Windows": "C:/Games/StarCraft II",
     "Darwin": "/Applications/StarCraft II",
     "Linux": "~/StarCraftII",
     "WineLinux": "~/.wine/drive_c/Program Files (x86)/StarCraft II",

@@ -1,8 +1,9 @@
 import sc2, sys
 from __init__ import run_ladder_game
 from sc2 import Race, Difficulty
-from sc2.player import Bot, Computer
+from sc2.player import Bot, Computer, Human
 import random
+import os
 
 # Load bot
 from additionalpylons import MyBot
@@ -18,7 +19,7 @@ allmaps = ['CyberForestLE', 'KairosJunctionLE', 'KingsCoveLE', 'NewRepugnancyLE'
 _difficulty = random.choice([Difficulty.CheatInsane, Difficulty.CheatMoney, Difficulty.CheatVision])
 
 
-_realtime = False
+_realtime = True
 
 _difficulty = Difficulty.CheatInsane #CheatInsane, CheatMoney, CheatVision
 _opponent = random.choice([Race.Zerg, Race.Terran, Race.Protoss, Race.Random])
@@ -32,8 +33,17 @@ if __name__ == '__main__':
         run_ladder_game(bot)
     else:
         # Local game
-        print("Starting local game...")      
-        sc2.run_game(sc2.maps.get(random.choice(allmaps)), [
-            Bot(Race.Protoss, MyBot()),
-            Computer(_opponent, _difficulty)
-        ], realtime=_realtime)
+        print("Starting local game...")
+        sc2map = sc2.maps.get(random.choice(allmaps))
+        print("Map: " + str(sc2map))
+        player1 = Human(Race.Terran, "guliver", True)
+        print("Player1: " + str(player1))
+        player2 = Bot(Race.Protoss, MyBot())
+        print("Player2: " + str(player2))
+        n = 1
+        filename = False
+        while not filename or os.path.exists(filename):
+            filename = str(sc2map.name) + "-" + str(player1.name) + "-AdditionalPylions-" + str(n) + ".SC2Replay"
+            n += 1
+        print("Replay name: " + filename)
+        sc2.run_game(sc2map, [player1, player2], realtime=_realtime, save_replay_as=filename)

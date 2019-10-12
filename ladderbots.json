@@ -1,6 +1,6 @@
  {
 	"Bots": {
-		"AdditionalPylons": {
+		"AdditionalPylonsClone": {
 			"Race": "Protoss",
 			"Type": "Python",
 			"RootPath": "./",

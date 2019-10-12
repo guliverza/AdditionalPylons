@@ -4,9 +4,9 @@ import random
 
 
 class UnitCounter:
-	
+
 	def __init__(self):
-		
+
 		self.unitCosts = {
 			'Zealot': 2,
 			'Stalker': 2,
@@ -20,7 +20,7 @@ class UnitCounter:
 			'Tempest': 5,
 			'Carrier': 6,
 			'HighTemplar': 2,
-			'Disruptor': 3, 
+			'Disruptor': 3,
 			'DarkTemplar': 2,
 			'Observer': 1,
 			'Mothership': 8
@@ -39,14 +39,14 @@ class UnitCounter:
 			'Tempest': 8,
 			'Carrier': 10,
 			'HighTemplar': 8,
-			'Disruptor': 8, 
+			'Disruptor': 8,
 			'DarkTemplar': 8,
 			'Observer': 2,
 			'Mothership': 8,
 			'Archon': 4,
 		}
 
-		
+
 		#current power based on = Min costs + (Gas Costs * 2)
 		self.unitPower = {
 			#zerg
@@ -85,7 +85,7 @@ class UnitCounter:
 			'Larva': 0.001,
 			'CreepTumor': 0.001,
 			'CreepTumorBurrowed': 0.001,
-		
+
 			#protoss
 			'Zealot': 100,
 			'Stalker': 225,
@@ -99,7 +99,7 @@ class UnitCounter:
 			'Colossus': 700,
 			'Tempest': 600,
 			'HighTemplar': 350,
-			'Disruptor': 450, 
+			'Disruptor': 450,
 			'DarkTemplar': 375,
 			'Observer': 0.001,
 			'Archon': 700,
@@ -109,7 +109,7 @@ class UnitCounter:
 			'Mothership': 1200,
 			'Probe': 0.001,
 			'Interceptor': 0.001,
-						
+
 			#terran
 			'CommandCenter': 0.001,
 			'Bunker': 350,
@@ -142,7 +142,7 @@ class UnitCounter:
 			'SCV': 0.001,
 
 		}
-		
+
 		self.counterTable = {
 			#zerg counters
 			'SpineCrawler': [
@@ -354,29 +354,29 @@ class UnitCounter:
 				[['Zealot', 3], ['Sentry', 0.05]],
 				],
 			'Marine': [
-				[['Colossus', 0.15], ['Stalker', .5], ['Sentry', 0.05]],
-				[['Stalker', 1], ['Sentry', 0.05]],
+				[['Colossus', 0.1], ['Stalker', .1], ['Zealot', 0.2], ['Sentry', 0.05]],
 				[['Zealot', 1]],
+				[['Stalker', 1], ['Sentry', 0.05]],
 				],
 			'Reaper': [
-				[['Stalker', 0.5]],
+				[['Adept', 1]],
 				],
 			'Marauder': [
-                [['Zealot', 2]],
+				[['Zealot', 2]],
 				[['Zealot', 1], ['Immortal', 0.2]],
 				[['Zealot', 1], ['Sentry', 0.05]],
 				],
-			'Ghost':  [
-                [['Stalker', 1], ['Observer', 0.25]],
+			'Ghost': [
+				[['Stalker', 1], ['Observer', 0.25]],
 				[['Colossus', 0.5], ['Tempest', 0.5], ['Observer', 0.25]],
 				],
 			'Hellion': [
 				[['Stalker', 1.5]],
-                [['Colossus', 0.5], ['Zealot', 0.2], ['Stalker', 0.1]],
+				[['Colossus', 0.5], ['Zealot', 0.2], ['Stalker', 0.1]],
 				[['Adept', 0.75]]
 				],
 			'HellionTank': [
-                [['Stalker', 1.5]],
+				[['Stalker', 1.5]],
 				[['Colossus', 0.5], ['Zealot', 0.2], ['Stalker', 0.1]],
 				],
 			'WidowMineBurrowed': [
@@ -393,14 +393,14 @@ class UnitCounter:
 				[['Zealot', 1]],
 				],
 			'SiegeTankSieged': [
-                [['Immortal', 1]],
+				[['Immortal', 1]],
 				[['Zealot', 2]],
-                [['Tempest', 1]],
+				[['Tempest', 1]],
 				],
 			'SiegeTank': [
-                [['Immortal', 1]],
+				[['Immortal', 1]],
 				[['Zealot', 2]],
-                [['Tempest', 1]],
+				[['Tempest', 1]],
 				],
 			'Thor': [
 				[['Immortal', 1.5]],
@@ -414,11 +414,11 @@ class UnitCounter:
 				],
 			'Viking': [
 				[['Stalker', 1]],
-                [['Phoenix', 1]],
+				[['Phoenix', 1]],
 				],
 			'Medivac': [
-                [['Stalker', 1]],
-#				[['Phoenix', 1]],
+				[['Stalker', 1]],
+				#[['Phoenix', 1]],
 				],
 			'LiberatorAG': [
 				[['Tempest', 1]],
@@ -459,7 +459,7 @@ class UnitCounter:
 		}
 
 
-		
+
 		self.cargoSize = {
 			'Zealot': 2,
 			'Stalker': 2,
@@ -471,7 +471,7 @@ class UnitCounter:
 			'DarkTemplar': 2,
 			'Disruptor': 4
 		}
-		
+
 		self.unitTrainers = {
 			'Zealot': 'Gateway',
 			'Stalker': 'Gateway',
@@ -485,7 +485,7 @@ class UnitCounter:
 			'Tempest': 'Stargate',
 			'Carrier': 'Stargate',
 			'HighTemplar': 'Gateway',
-			'Disruptor': 'RoboticsFacility', 
+			'Disruptor': 'RoboticsFacility',
 			'DarkTemplar': 'Gateway',
 			'Observer': 'RoboticsFacility',
 			'Mothership': 'Nexus'
@@ -504,12 +504,12 @@ class UnitCounter:
 			'Tempest': 'Air',
 			'Carrier': 'Air',
 			'HighTemplar': 'Ground',
-			'Disruptor': 'Ground', 
+			'Disruptor': 'Ground',
 			'DarkTemplar': 'Ground',
 			'Observer': 'Air',
 			'Mothership': 'Air'
 		}
-		
+
 		self.unitReqs = {
 			'Zealot': ['Gateway'],
 			'Stalker': ['Gateway', 'CyberneticsCore'],
@@ -527,9 +527,9 @@ class UnitCounter:
 			'Disruptor': ['Gateway', 'CyberneticsCore', 'RoboticsFacility', 'RoboticsBay'],
 			'DarkTemplar': ['Gateway', 'CyberneticsCore', 'TwilightCouncil', 'DarkShrine'],
 			'Observer': ['Gateway', 'CyberneticsCore', 'RoboticsFacility'],
-            'Archon': ['Gateway', 'CyberneticsCore', 'TwilightCouncil', 'TemplarArchive'],
+			'Archon': ['Gateway', 'CyberneticsCore', 'TwilightCouncil', 'TemplarArchive'],
 		}
-		
+
 		self.nameCross = {
 			'Gateway': GATEWAY,
 			'CyberneticsCore': CYBERNETICSCORE,
@@ -557,7 +557,7 @@ class UnitCounter:
 			'Carrier': CARRIER,
 			'Mothership': MOTHERSHIP
 		}
-		
+
 		self.warpAbilities = {
 			'Zealot': WARPGATETRAIN_ZEALOT,
 			'Stalker': WARPGATETRAIN_STALKER,
@@ -565,13 +565,13 @@ class UnitCounter:
 			'Sentry': WARPGATETRAIN_SENTRY,
 			'HighTemplar': WARPGATETRAIN_HIGHTEMPLAR,
 		}
-		
-		
+
+
 		self.intro_sayings = [
 			'May the RNG be in your favor and bring you lots of joy. (happy)',
 			'(glhf)',
 			'Artificial intelligence is no match for natural stupidity. (nerd)',
-			]	
+			]
 
 		self.loss_sayings = [
 			'My IQ came back negative. (surprised)',
@@ -586,7 +586,7 @@ class UnitCounter:
 			# 'I used to think I was indecisive, but now I am not so sure. (thinking)',
 			# 'Life is short, smile while you still have all your teeth. (happy)',
 			"Starting stage completed, moving to gamestate mode",
-			]		
+			]
 
 		self.s1_fail = [
 #			'People say nothing is impossible, but I do nothing every day. (sleepy)',
@@ -594,24 +594,24 @@ class UnitCounter:
 #			'It would be nice to spend resources on buildings and units, but right now they are desperately needed for more pylons.',
 #			"You're killin' me, Smalls. (angry)",
 			"Starting stage failed, moving to gamestate mode",
-			]		
+			]
 
 		self.intro_descriptions = {
 			1 : 'one base',
 			2 : 'one base rush defense',
-			3 : "two bases",	
-			4 : 'two bases rush defense',	
+			3 : "two bases",
+			4 : 'two bases rush defense',
 			5 : '3 greedy bases',
 		}
-		
+
 		self.cannon_rush = [
 			"Excuse me sir, it seems you've misplaced some buildings.",
 			"Siege Detected, moving to gamestate mode.",
 		]
-			
+
 	def cannonRushSaying(self):
 		return random.choice(self.cannon_rush)
-		
+
 
 	def getIntroDescription(self, intro_id):
 		return self.intro_descriptions.get(intro_id)
@@ -627,36 +627,36 @@ class UnitCounter:
 
 	def getCounterUnits(self, enemy):
 		return self.counterTable.get(enemy)
-	
+
 	def getUnitReqs(self, unit):
 		return self.unitReqs.get(unit)
-	
+
 	def getUnitTrainer(self, unit):
 		return self.unitTrainers.get(unit)
 
 	def getUnitCost(self, unit):
 		return self.unitCosts.get(unit)
-	
+
 	def getUnitDemandCost(self, unit):
 		return self.unitDemandCost.get(unit)
-		
+
 	def getUnitPower(self, unit):
 		return self.unitPower.get(unit)
 
 	def getSupportReq(self, unit):
 		return self.supportTable.get(unit)
-	
+
 	def getUnitOpArea(self, unit):
 		return self.unitOpArea.get(unit)
-	
+
 	def getUnitCargo(self, unit):
 		return self.cargoSize.get(unit)
 
 	def getWarpAbility(self, name):
-		return self.warpAbilities.get(name)	
+		return self.warpAbilities.get(name)
 
 	def gets1successSaying(self):
-		return random.choice(self.s1_complete)	
-	
+		return random.choice(self.s1_complete)
+
 	def gets1failSaying(self):
-		return random.choice(self.s1_fail)	
+		return random.choice(self.s1_fail)
